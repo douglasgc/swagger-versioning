@@ -5,8 +5,6 @@ test
 e2e
 
 jest.config.json
-index.ts
-plugin.ts
 package-lock.json
 .eslintignore
 .eslintrc.js
