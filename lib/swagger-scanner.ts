@@ -88,7 +88,16 @@ export class SwaggerScanner {
         );
         return this.transformer.unescapeColonsInPath(app, result);
       }
-    );
+    )
+    .map((item) => {
+        if(options.includeOnlyVersion === undefined) return item;
+        return item.filter((api) => {
+            const splitedOperationId = api.root.operationId.split('.');
+            const version = splitedOperationId[splitedOperationId.length - 1];
+
+            return options.includeOnlyVersion?.toString() == version?.toString();
+        });
+    });
 
     const schemas = this.explorer.getSchemas();
     this.addExtraModels(schemas, extraModels);
@@ -106,7 +115,7 @@ export class SwaggerScanner {
     modulePath: string | undefined,
     globalPrefix: string | undefined,
     applicationConfig: ApplicationConfig,
-    operationIdFactory?: (controllerKey: string, methodKey: string) => string
+    operationIdFactory?: (controllerKey: string, methodKey: string, versionKey: string) => string
   ): ModuleRoute[] {
     const denormalizedArray = [...routes.values()].map((ctrl) =>
       this.explorer.exploreController(
